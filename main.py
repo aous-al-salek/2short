@@ -1,69 +1,72 @@
+from flask import Flask
+from flask import request, escape
 import string
 import random
 import mysql.connector
 
-def main():
+app = Flask(__name__)
 
-    def shorten():
-        original_url = input("Please enter the original URL: ")
+@app.route("/")
+def index():
+        original_url = str(escape(request.args.get("URL", "")))
+        if original_url:
+            shortened_url = shorten(original_url)
+        else:
+            shortened_url = ""
+        return( """
+                    <html>
+                        <Title>URL Shortener</Title>
+                        <head>URL Shortener</head>
+                        <body>
+                            <form action="" method="get">
+                                <input type="text" name="URL">
+                                <input type="submit" value="Shorten">
+                            </form>
+                        </body>
+                    </html>
+                """
+                + "Shortened URL: "
+                + shortened_url
+        )
 
-        sql_connection = mysql.connector.connect(host="localhost", user="database_user", passwd="database_user_password", database="linkshortener")
-        sql_cursor = sql_connection.cursor()
+@app.route("/<original_url>")
+def shorten(original_url):
+    original_url = original_url
 
-        def random_string():
-            lowercase = string.ascii_lowercase
-            uppercase = string.ascii_uppercase
-            digits = string.digits
+    sql_connection = mysql.connector.connect(host="localhost", user="database_user", passwd="database_user_password", database="linkshortener")
+    sql_cursor = sql_connection.cursor()
 
-            random_lowercase = "".join((random.choice(string.ascii_lowercase) for x in range(2)))
-            random_uppercase = "".join((random.choice(string.ascii_uppercase) for x in range(2)))
-            random_digits = "".join((random.choice(string.digits) for x in range(2)))
+    def random_string():
+        lowercase = string.ascii_lowercase
+        uppercase = string.ascii_uppercase
+        digits = string.digits
 
-            joined_string = random_lowercase + random_uppercase + random_digits
-            list_joined_string = list(joined_string)
-            random.shuffle(list_joined_string)
-            shuffled_string = "".join(list_joined_string)
+        random_lowercase = "".join((random.choice(string.ascii_lowercase) for x in range(2)))
+        random_uppercase = "".join((random.choice(string.ascii_uppercase) for x in range(2)))
+        random_digits = "".join((random.choice(string.digits) for x in range(2)))
 
-            
-            sql_cursor.execute("SELECT * FROM shortslinks WHERE shorts = '"+shuffled_string+"';")
-            query_results = sql_cursor.fetchall()
+        joined_string = random_lowercase + random_uppercase + random_digits
+        list_joined_string = list(joined_string)
+        random.shuffle(list_joined_string)
+        shuffled_string = "".join(list_joined_string)
 
-            if len(query_results) != 0:
-                random_string()
-            else:
-                return shuffled_string
 
-        shuffled_string = random_string()
-
-        sql_cursor.execute("INSERT INTO shortslinks (shorts, links) VALUES ('"+shuffled_string+"', '"+original_url+"');")
-
-        sql_connection.commit()
-        sql_connection.close()
-
-        print("The shortened link is: https://example.com/" + shuffled_string)
-
-    def retrieve():
-        shortened_url = input("Please enter the shortened URL: ")
-        shortened_url = shortened_url.split("/")
-        shuffled_string = shortened_url[-1]
-
-        sql_connection = mysql.connector.connect(host="localhost", user="database_user", passwd="database_user_password", database="linkshortener")
-        sql_cursor = sql_connection.cursor()
         sql_cursor.execute("SELECT * FROM shortslinks WHERE shorts = '"+shuffled_string+"';")
         query_results = sql_cursor.fetchall()
-        try:
-            print("The original link is:", query_results[0][1])
-        except:
-            print("The link you entered does not exist!")
 
-    choice = input("Do you want to shorten or retrieve? s/r ")
-    if choice.lower() == "s":
-        shorten()
-    elif choice.lower() == "r":
-        retrieve()
-    else:
-        print("Please enter a valid choice!")
-        main()
+        if len(query_results) != 0:
+            random_string()
+        else:
+            return shuffled_string
+
+    shuffled_string = random_string()
+
+    sql_cursor.execute("INSERT INTO shortslinks (shorts, links) VALUES ('"+shuffled_string+"', '"+original_url+"');")
+
+    sql_connection.commit()
+    sql_connection.close()
+
+    return("https://example.com/" + shuffled_string)
 
 if __name__ == "__main__":
-    main()
+    app.run(host="0.0.0.0", port=8080, debug=True)
