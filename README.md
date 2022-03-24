@@ -7,3 +7,6 @@ Requirements:
     - mysql-connector-python module
     - flask
   - MariaDB server 10
+    - A database called "linkshortener"
+    - A database user "database_user" with password "database_user_password"
+    - Grant privileges to "database_user" over "linkshortener"
