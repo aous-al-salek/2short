@@ -2,5 +2,7 @@
 URL shortener
 
 Requirements:
-  - Python 3.10
-  - MariaDB or MySQL server
+  - Ubuntu 20.04 LTS
+  - Python 3.9
+    - mysql-connector-python module
+  - MariaDB server 10
