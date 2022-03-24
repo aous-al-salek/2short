@@ -1,6 +1,6 @@
 -- MySQL dump 10.19  Distrib 10.3.34-MariaDB, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: linkshortner
+-- Host: localhost    Database: linkshortener
 -- ------------------------------------------------------
 -- Server version	10.3.34-MariaDB-0ubuntu0.20.04.1
 

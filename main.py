@@ -7,7 +7,7 @@ def main():
     def shorten():
         original_url = input("Please enter the original URL: ")
 
-        sql_connection = mysql.connector.connect(host="localhost", user="database_user", passwd="database_user_password", database="linkshortner")
+        sql_connection = mysql.connector.connect(host="localhost", user="database_user", passwd="database_user_password", database="linkshortener")
         sql_cursor = sql_connection.cursor()
 
         def random_string():
@@ -47,7 +47,7 @@ def main():
         shortened_url = shortened_url.split("/")
         shuffled_string = shortened_url[-1]
 
-        sql_connection = mysql.connector.connect(host="localhost", user="database_user", passwd="database_user_password", database="linkshortner")
+        sql_connection = mysql.connector.connect(host="localhost", user="database_user", passwd="database_user_password", database="linkshortener")
         sql_cursor = sql_connection.cursor()
         sql_cursor.execute("SELECT * FROM shortslinks WHERE shorts = '"+shuffled_string+"';")
         query_results = sql_cursor.fetchall()
