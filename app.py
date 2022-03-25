@@ -20,17 +20,94 @@ def index():
         return( """
                     <!doctype html>
                     <html>
-                        <Title>URL Shortener</Title>
-                        <head>URL Shortener</head>
+                        <Title>2Short</Title>
+                        <head>
+                            <style>
+                                * {
+                                    box-sizing: border-box;
+                                }
+                                body {
+                                    font-family: Arial;
+                                    width: 100%;
+                                    border-radius: 5px;
+                                    background-color: #45a049;
+                                    padding: 20px;
+                                    text-align: center;
+                                    color: #c9cdd1;
+                                }
+                                .header {
+                                    padding: 30px;
+                                    text-align: center;
+                                }
+                                input[type=text], select {
+                                    width: 75%;
+                                    padding: 12px 20px;
+                                    margin: 8px 0;
+                                    display: inline-block;
+                                    border: 1px solid #ccc;
+                                    border-radius: 25px;
+                                    box-sizing: border-box;
+                                    box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                                }
+                                input[type=submit] {
+                                    width: 10%;
+                                    background-color: #26802a;
+                                    color: white;
+                                    padding: 14px 20px;
+                                    margin: 8px 0;
+                                    border: none;
+                                    border-radius: 25px;
+                                    cursor: pointer;
+                                    box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                                }
+                                input[type=submit]:hover {
+                                    background-color: #45a049;
+                                }
+                                button {
+                                    width: 10%;
+                                    background-color: #26802a;
+                                    color: white;
+                                    padding: 14px 20px;
+                                    margin: 8px 0;
+                                    border: none;
+                                    border-radius: 25px;
+                                    cursor: pointer;
+                                    box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                                }
+                                button:hover {
+                                    background-color: #45a049;
+                                }
+                            </style>
+                        </head>
                         <body>
-                            <form action="" method="get">
-                                <input type="text" name="URL">
-                                <input type="submit" value="Shorten">
-                            </form>
+                            <div class=header>
+                                <h1>URL Shortener</h1>
+                            </div>
+                            <div>
+                                <form action="" method="get">
+                                    <input type="text" name="URL">
+                                    <p></p>
+                                    <input type="submit" value="Shorten">
+                                </form>
+                            </div>
+                            <script>
+                                function CopyToClipboard(containerid) {
+                                    if (document.selection) {
+                                        var range = document.body.createTextRange();
+                                        range.moveToElementText(document.getElementById(containerid));
+                                        range.select().createTextRange();
+                                        document.execCommand("copy");
+                                    } else if (window.getSelection) {
+                                        var range = document.createRange();
+                                        range.selectNode(document.getElementById(containerid));
+                                        window.getSelection().addRange(range);
+                                        document.execCommand("copy");
+                                    }
+                                }
+                            </script>
                         </body>
                     </html>
                 """
-                + "Shortened URL: "
                 + shortened_url
         )
 
@@ -95,7 +172,13 @@ def shorten(original_url):
     sql_connection.close()
 
     shortened_url = "https://example.com/" + shuffled_string
-    return("<a href="+shortened_url+">"+shortened_url+"</a>")
+    return("""
+            <div calss=sl>
+                <h3>Shortened URL</h3>
+                <p id="surl">{surl}</p>
+                <button onclick="CopyToClipboard('surl')">Copy 2Short URL</button>
+            </div>
+        """.format(surl=shortened_url))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
