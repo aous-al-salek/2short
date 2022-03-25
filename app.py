@@ -14,6 +14,7 @@ def index():
         else:
             shortened_url = ""
         return( """
+                    <!doctype html>
                     <html>
                         <Title>URL Shortener</Title>
                         <head>URL Shortener</head>
@@ -66,7 +67,8 @@ def shorten(original_url):
     sql_connection.commit()
     sql_connection.close()
 
-    return("https://example.com/" + shuffled_string)
+    shortened_url = "https://example.com/" + shuffled_string
+    return("<a href="+shortened_url+">"+shortened_url+"</a>")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
