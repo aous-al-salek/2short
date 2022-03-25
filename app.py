@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request, escape
+from flask import request, escape, redirect
 import string
 import random
 import mysql.connector
@@ -30,12 +30,32 @@ def index():
                 + shortened_url
         )
 
-@app.route("/<original_url>")
+@app.route("/<string:original_url>")
+def retrieve(original_url):
+    shortened_url = original_url
+    shortened_url = shortened_url.split("/")
+    shuffled_string = shortened_url[-1]
+
+    sql_connection = mysql.connector.connect(host="localhost", user="database_user", passwd="database_user_password", database="linkshortener")
+    sql_cursor = sql_connection.cursor()
+    sql_cursor.execute("SELECT * FROM shortslinks WHERE shorts = '"+shuffled_string+"';")
+    query_results = sql_cursor.fetchall()
+    try:
+        return(redirect(query_results[0][1]))
+    except:
+        return("The link you requested does not exist!")
+
 def shorten(original_url):
     original_url = original_url
 
     sql_connection = mysql.connector.connect(host="localhost", user="database_user", passwd="database_user_password", database="linkshortener")
     sql_cursor = sql_connection.cursor()
+
+    sql_cursor.execute("SELECT * FROM shortslinks WHERE shorts = '"+original_url+"';")
+    initial_query_results = sql_cursor.fetchall()
+    
+    if len(initial_query_results) != 0:
+        retrieve(original_url)
 
     def random_string():
         lowercase = string.ascii_lowercase
