@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request, escape, redirect
 import string
 import random
+import urllib
 import mysql.connector
 
 app = Flask(__name__)
@@ -10,6 +11,9 @@ app = Flask(__name__)
 def index():
         original_url = str(escape(request.args.get("URL", "")))
         if original_url:
+            original_url = original_url.replace("&amp;", "&")
+            original_url = original_url.replace("&lt;", "<")
+            original_url = original_url.replace("&gt;", ">")
             shortened_url = shorten(original_url)
         else:
             shortened_url = ""
@@ -56,6 +60,9 @@ def shorten(original_url):
     
     if len(initial_query_results) != 0:
         retrieve(original_url)
+
+    original_url = urllib.parse.unquote_plus(original_url)
+    original_url = original_url.replace(" ", "+")
 
     def random_string():
         lowercase = string.ascii_lowercase
